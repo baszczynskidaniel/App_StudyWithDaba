@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="deploymentTargetDropDown">
+    <value>
+      <entry key="AddDeckDialogPreview">
+        <State />
+      </entry>
+      <entry key="NoteSummaryPreview">
+        <State />
+      </entry>
+      <entry key="NotesScreenPreview">
+        <State />
+      </entry>
+      <entry key="SWDSearchBarPreview">
+        <State />
+      </entry>
+      <entry key="SWDSelectionBottomSheetPreview">
+        <State />
+      </entry>
+      <entry key="app">
+        <State />
+      </entry>
+      <entry key="app.proto">
+        <State />
+      </entry>
+    </value>
+  </component>
+</project>

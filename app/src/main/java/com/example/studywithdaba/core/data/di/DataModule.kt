@@ -1,0 +1,38 @@
+package com.example.studywithdaba.core.data.di
+
+import com.example.studywithdaba.core.data.repository.DeckRepository
+import com.example.studywithdaba.core.data.repository.DeckRepositoryImpl
+import com.example.studywithdaba.core.data.repository.NoteRepository
+import com.example.studywithdaba.core.data.repository.NoteRepositoryImpl
+import com.example.studywithdaba.core.data.repository.SearchHistoryRepository
+import com.example.studywithdaba.core.data.repository.SearchHistoryRepositoryImpl
+import com.example.studywithdaba.core.data.repository.UserDataRepository
+import com.example.studywithdaba.core.data.repository.UserDataRepositoryImpl
+import dagger.Binds
+import dagger.Module
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
+
+@Module
+@InstallIn(SingletonComponent::class)
+interface DataModule {
+    @Binds
+    fun bindsUserDataRepository(
+        userDataRepository: UserDataRepositoryImpl,
+    ): UserDataRepository
+
+    @Binds
+    fun bindSearchHistoryRepository(
+        searchHistoryRepository: SearchHistoryRepositoryImpl,
+    ): SearchHistoryRepository
+
+    @Binds
+    fun bindNoteRepository(
+        noteRepository: NoteRepositoryImpl,
+    ): NoteRepository
+
+    @Binds
+    fun bindDeckRepository(
+        deckRepository: DeckRepositoryImpl,
+    ): DeckRepository
+}
