@@ -44,6 +44,24 @@ fun <T: Enum<T>>SelectionMenu(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
+fun <T: Enum<T>>SelectionMenu(
+    selected: T,
+    onFilterItemClick: (T) -> Unit,
+    values: Array<T>
+) {
+    Row(
+        modifier = Modifier.horizontalScroll(rememberScrollState()),
+        horizontalArrangement = Arrangement.spacedBy(LocalDimensions.current.defaultPadding)
+    ) {
+        values.forEach {
+            FilterChip(selected = it == selected, onClick = { onFilterItemClick(it) }, label = { Text(text = it.toString()) })
+        }
+    }
+}
+
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
 fun <T: Enum<T>>SelectionMenuWithoutBorder(
     modifier: Modifier = Modifier,
     selected: T,

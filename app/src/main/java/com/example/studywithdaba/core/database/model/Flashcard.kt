@@ -24,6 +24,7 @@ data class Flashcard(
     val nextRepetition: Long = timestamp,
     val level: Int = 0,
 ) {
+
     fun getIncrementedScore(): Int {
         return level + 1
     }
@@ -38,14 +39,15 @@ data class Flashcard(
 
     fun getNextRepetitionDelayInMillis(score: Int): Long {
         return when {
-            score <= 0 -> TimeUnit.MINUTES.toMillis(1)
-            score == 1 -> TimeUnit.DAYS.toMillis(1)
-            score == 2 -> TimeUnit.DAYS.toMillis(6)
-            score == 3 -> TimeUnit.DAYS.toMillis(7)
-            score == 4 -> TimeUnit.DAYS.toMillis(16)
-            score == 5 -> TimeUnit.DAYS.toMillis(33)
-            score == 6 -> TimeUnit.DAYS.toMillis(84)
-            score == 7 -> TimeUnit.DAYS.toMillis(210)
+            score <= 0 -> 0
+            score <= 1 -> TimeUnit.MINUTES.toMillis(1)
+            score == 2 -> TimeUnit.DAYS.toMillis(1)
+            score == 3 -> TimeUnit.DAYS.toMillis(6)
+            score == 4 -> TimeUnit.DAYS.toMillis(7)
+            score == 5 -> TimeUnit.DAYS.toMillis(16)
+            score == 6 -> TimeUnit.DAYS.toMillis(33)
+            score == 7 -> TimeUnit.DAYS.toMillis(84)
+            score == 8 -> TimeUnit.DAYS.toMillis(210)
             else -> TimeUnit.DAYS.toMillis(365)
         }
     }

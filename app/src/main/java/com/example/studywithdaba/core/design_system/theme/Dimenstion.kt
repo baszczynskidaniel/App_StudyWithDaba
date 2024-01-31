@@ -13,8 +13,11 @@ data class Dimensions(
     val dialogMaxWidth: Dp = 400.dp,
     val highlightWidth: Dp = 2.dp,
     val bigClip: Dp = 32.dp,
+    val mediumClip: Dp = 16.dp,
     val dividerThickness: Dp = 0.5.dp,
     val alertDialogWidth: Dp = 400.dp,
+    val bigIconButton: Dp = 72.dp,
+    val bigIcon: Dp = 36.dp,
 )
 
 val LocalDimensions = staticCompositionLocalOf { Dimensions() }

@@ -13,15 +13,20 @@ import androidx.compose.material.icons.filled.CreateNewFolder
 import androidx.compose.material.icons.filled.DarkMode
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Error
 import androidx.compose.material.icons.filled.ExpandLess
 import androidx.compose.material.icons.filled.ExpandMore
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.material.icons.filled.Folder
 import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.LightMode
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.NavigateNext
 import androidx.compose.material.icons.filled.Palette
 import androidx.compose.material.icons.filled.PushPin
 import androidx.compose.material.icons.filled.Quiz
@@ -29,12 +34,16 @@ import androidx.compose.material.icons.filled.Repeat
 import androidx.compose.material.icons.filled.School
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.Shuffle
 import androidx.compose.material.icons.filled.SmartToy
 import androidx.compose.material.icons.filled.StickyNote2
 import androidx.compose.material.icons.filled.Style
 import androidx.compose.material.icons.filled.SwapVert
+import androidx.compose.material.icons.filled.Undo
+import androidx.compose.material.icons.filled.VolumeUp
 import androidx.compose.material.icons.outlined.DeleteOutline
 import androidx.compose.material.icons.outlined.Favorite
+import androidx.compose.material.icons.outlined.Folder
 import androidx.compose.material.icons.outlined.Grid3x3
 import androidx.compose.material.icons.outlined.GridView
 import androidx.compose.material.icons.outlined.Home
@@ -49,6 +58,12 @@ import androidx.compose.material.icons.outlined.ViewAgenda
 
 //https://fonts.google.com/icons to see all Icons extended
 object SWDIcons {
+    val Next = Icons.Default.NavigateNext
+    val Undo = Icons.Default.Undo
+    val Error = Icons.Default.Error
+    val Folder = Icons.Default.Folder
+    val Hide = Icons.Default.KeyboardArrowUp
+    val Expand = Icons.Default.KeyboardArrowDown
     val History = Icons.Default.History
     val HomeOutlined = Icons.Outlined.Home
     val HomeFilled = Icons.Filled.Home
@@ -93,4 +108,6 @@ object SWDIcons {
     val Column3 = Icons.Outlined.Grid3x3
     val Switch = Icons.Default.SwapVert
     val Robot = Icons.Default.SmartToy
+    val Shuffle = Icons.Default.Shuffle
+    val VolumeUp = Icons.Default.VolumeUp
 }

@@ -1,6 +1,7 @@
 package com.example.studywithdaba.feature_note
 
 import android.app.Activity
+import android.content.Context
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -17,6 +18,7 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -47,8 +49,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.view.WindowCompat
 import androidx.navigation.NavController
 import com.example.dabastudy.core.database.model.entities.Note
+import com.example.studywithdaba.core.design_system.component.AddFeaturesBottomSheetEvent
 import com.example.studywithdaba.core.design_system.component.BlackWhiteChip
 import com.example.studywithdaba.core.design_system.component.DialogSelectorWithState
+import com.example.studywithdaba.core.design_system.component.SWDBottomSheet
 import com.example.studywithdaba.core.design_system.component.SWDSearchBar
 import com.example.studywithdaba.core.design_system.component.SWDSearchBarEvent
 import com.example.studywithdaba.core.design_system.component.SWDSearchBarState
@@ -107,7 +111,7 @@ enum class NotesFilterBy {
 
 data class NotesState(
     val areAllSelectedNotesFavourite: Boolean = false,
-    val gridSize: Int = 1,
+    val gridSize: Int = 2,
     val areNotesInInvertedOrder: Boolean = false,
     val searchState: SWDSearchBarState = SWDSearchBarState(),
     val sortBy: NotesSortBy = NotesSortBy.DEFAULT,
@@ -116,9 +120,12 @@ data class NotesState(
     val showFilterByDialog: Boolean = false,
     val notes: List<Note> = emptyList(),
     val selectedNotesId: Set<Long> = emptySet(),
+    val showNoteBottomSheet: Boolean = false,
+    val bottomSheetNoteId: Long = -1L,
 )
 
 sealed class NotesEvent {
+    data class OnNoteBottomSheetEvent(val event: NoteBottomSheetEvent): NotesEvent()
     object OnSettings: NotesEvent()
     object OnClearSelection : NotesEvent()
     object OnRemoveSelectedNotes: NotesEvent()
@@ -131,10 +138,47 @@ sealed class NotesEvent {
     object OnSortByClick: NotesEvent()
     object OnFilterByClick: NotesEvent()
     data class OnAddNote(val navController: NavController): NotesEvent()
+    data class OnMoreNoteClick(val noteId: Long): NotesEvent()
     object OnReset: NotesEvent()
     data class OnNoteItemClick(val noteId: Long, val navController: NavController): NotesEvent()
     data class OnNoteItemLongClick(val noteId: Long, val selectedChange: Boolean): NotesEvent()
     data class OnNoteItemFavouriteClick(val noteId: Long, val favouriteChange: Boolean): NotesEvent()
+
+}
+
+sealed class NoteBottomSheetEvent {
+    object OnDismiss: NoteBottomSheetEvent()
+    data class OnRemove(val noteId: Long): NoteBottomSheetEvent()
+    data class OnGenerateFlashcards(val noteId: Long, val context: Context): NoteBottomSheetEvent()
+}
+@Composable
+fun NoteBottomSheet(
+    noteId: Long,
+    onEvent: (NoteBottomSheetEvent) -> Unit
+) {
+    val context = LocalContext.current
+    SWDBottomSheet(onDismiss = { onEvent(NoteBottomSheetEvent.OnDismiss) }, title = "Note option") {
+        Divider(thickness = LocalDimensions.current.dividerThickness)
+        ListItem(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable { onEvent(NoteBottomSheetEvent.OnGenerateFlashcards(noteId, context)) },
+            headlineContent = { Text(text = "Generate flashcards with ai based on note") },
+            leadingContent = {
+                Icon(SWDIcons.Robot, null)
+            }
+        )
+        Divider(thickness = LocalDimensions.current.dividerThickness)
+        ListItem(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable { onEvent(NoteBottomSheetEvent.OnRemove(noteId)) },
+            headlineContent = { Text(text = "Remove flashcard") },
+            leadingContent = {
+                Icon(SWDIcons.DeleteOutlined, null)
+            }
+        )
+    }
 
 }
 
@@ -269,7 +313,9 @@ fun NotesScreen(
                         onFavouriteClick = { noteId, favouriteChange ->
                             onEvent(NotesEvent.OnNoteItemFavouriteClick(noteId, favouriteChange))
                         },
-                        onMoreClick = {}
+                        onMoreClick = {
+                            onEvent(NotesEvent.OnMoreNoteClick(it))
+                        }
                     )
                 }
             }
@@ -283,11 +329,6 @@ fun NotesScreen(
 
         }
     }
-//    FloatingActionButton(
-//        onClick = { NotesEvent.OnAddNote }
-//    ) {
-//        Icon(imageVector = SWDIcons.Add, contentDescription = null)
-//    }
 
     if(state.showSortByDialog)
         DialogSelectorWithState(
@@ -307,6 +348,9 @@ fun NotesScreen(
                 onEvent(NotesEvent.OnFilterByDismiss(it))
             }
         )
+    if(state.showNoteBottomSheet) {
+        NoteBottomSheet(noteId = state.bottomSheetNoteId, onEvent = {onEvent(NotesEvent.OnNoteBottomSheetEvent(it))})
+    }
 }
 
 
@@ -435,84 +479,3 @@ fun FilterResultRow(
     }
 }
 
-@Preview
-@Composable
-internal fun NotesScreenPreview() {
-    var state by remember {
-        mutableStateOf(NotesState(
-            notes = listOf(
-                Note(noteId = 1, title = "first note", content = "to be or not to be"),
-                Note(noteId = 2, title = "first note", content = "to be or not to be"),
-                Note(noteId = 3, title = "first note", content = "to be or not to be"),
-                Note(noteId = 4, title = "first note", content = "to be or not to be"),
-                Note(noteId = 5, title = "first note", content = "to be or not to be"),
-                Note(noteId = 6, title = "first note", content = "to be or not to be"),
-                Note(noteId = 7, title = "first note", content = "to be or not to be"),
-                Note(noteId = 8, title = "first note", content = "to be or not to be"),
-                Note(noteId = 9, title = "first note", content = "to be or not to be"),
-                Note(noteId = 10, title = "first note", content = "to be or not to be"),
-
-            )
-        ))
-    }
-
-
-    fun onEvent(event: NotesEvent) {
-        when(event) {
-
-            NotesEvent.OnClearSelection -> state = state.copy(
-                selectedNotesId = emptySet()
-            )
-            is NotesEvent.OnFilterByDismiss -> TODO()
-            NotesEvent.OnFilterByClick -> TODO()
-            is NotesEvent.OnGridSizeChange -> state = state.copy(gridSize = if(event.oldValue == 1) 2 else 1)
-            is NotesEvent.OnInvert -> TODO()
-            is NotesEvent.OnNoteItemClick -> TODO()
-            is NotesEvent.OnNoteItemFavouriteClick -> TODO()
-            is NotesEvent.OnNoteItemLongClick -> {
-                var selectedNotesId = state.selectedNotesId.toMutableSet()
-                if(event.noteId in selectedNotesId)
-                    selectedNotesId.remove(event.noteId)
-                else
-                    selectedNotesId.add(event.noteId)
-                state = state.copy(
-                    selectedNotesId = selectedNotesId
-                )
-            }
-            NotesEvent.OnRemoveSelectedNotes -> TODO()
-            NotesEvent.OnReset -> TODO()
-            is NotesEvent.OnSearchEvent -> TODO()
-            is NotesEvent.OnSelectionFavouriteChange -> TODO()
-            NotesEvent.OnSettings -> TODO()
-            is NotesEvent.OnSortByDismiss -> TODO()
-            NotesEvent.OnSortByClick -> TODO()
-            is NotesEvent.OnAddNote -> TODO()
-        }
-    }
-
-    StudyWithDabaTheme(
-        darkTheme = false,
-        dynamicColor = false
-    ) {
-        val view = LocalView.current
-        if (!view.isInEditMode) {
-            SideEffect {
-                val window = (view.context as Activity).window
-                window.statusBarColor = Color.Transparent.toArgb()
-                window.navigationBarColor = Color.Transparent.toArgb()
-                WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = false
-            }
-        }
-
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(MaterialTheme.colorScheme.background)
-        ) {
-            NotesScreen(state = state, onEvent = {onEvent(it)}, navController = NavController(
-                LocalContext.current)
-            )
-        }
-
-    }
-}

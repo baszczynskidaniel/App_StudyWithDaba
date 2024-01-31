@@ -75,40 +75,6 @@ fun SWDNavigationBar(
     }
 }
 
-@Preview
-@Composable
-fun SWDNavigationBarPreview() {
-    var currentRoute by remember {
-        mutableStateOf(NavigationBarDestination.HOME.route)
-    }
-    StudyWithDabaTheme {
-        Surface(
-            modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)
-        ) {
-
-        }
-        Scaffold(
-            modifier = Modifier
-                .fillMaxSize(),
-            bottomBar = {
-                SWDNavigationBar(
-                    currentRoute = currentRoute,
-                    onClick = { currentRoute = it },
-                    onAdd = {}
-                    )
-            }
-        ) { paddingValues ->
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(MaterialTheme.colorScheme.background)
-                    .padding(paddingValues)
-            ) {
-
-            }
-        }
-    }
-}
 
 
 enum class NavigationBarDestination(
@@ -119,13 +85,7 @@ enum class NavigationBarDestination(
     val route: String
 ) {
 
-    HOME(
-        selectedIcon = SWDIcons.HomeFilled,
-        unselectedIcon = SWDIcons.HomeOutlined,
-        iconText = "Home",
-        title = "home",
-        route = Screen.Home.route
-    ),
+
     NOTES(
         selectedIcon = SWDIcons.NoteFilled,
         unselectedIcon = SWDIcons.NoteOutlined,
@@ -138,14 +98,8 @@ enum class NavigationBarDestination(
         unselectedIcon = SWDIcons.FlashcardOutlined,
         iconText = "Flashcards",
         title = "Flashcards",
-        route = "decks"
+        route = Screen.Decks.route
     ),
-    STUDY(
-        selectedIcon = SWDIcons.StudyFilled,
-        unselectedIcon = SWDIcons.StudyOutlined,
-        iconText = "Study",
-        title = "Study",
-        route = "study"
-    ),
+
 
 }

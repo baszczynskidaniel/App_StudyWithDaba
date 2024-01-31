@@ -34,6 +34,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.dabastudy.core.database.model.entities.Deck
 import com.example.studywithdaba.MainActivity
 import com.example.studywithdaba.core.data.repository.DeckRepository
+import com.example.studywithdaba.core.data.util.ValidationResult
 import com.example.studywithdaba.core.design_system.icon.SWDIcons
 import com.example.studywithdaba.core.design_system.theme.LocalDimensions
 import dagger.assisted.Assisted
@@ -52,7 +53,7 @@ class AddEditDeckViewModel @AssistedInject constructor(
     @Assisted private val deckId: Long?
 ): ViewModel() {
     private val validateTitle: ValidateTitle = ValidateTitle()
-    private val _state = MutableStateFlow(AddDeckState())
+    private val _state = MutableStateFlow(AddEditDeckState())
     private val _validationEvent = Channel<ValidationEvent>()
     val validationEvent = _validationEvent.receiveAsFlow()
     val state = _state
@@ -92,9 +93,9 @@ class AddEditDeckViewModel @AssistedInject constructor(
     }
 
 
-    fun onEvent(event: AddDeckEvent) {
+    fun onEvent(event: AddEditDeckEvent) {
         when(event) {
-            AddDeckEvent.OnAddDeck -> {
+            AddEditDeckEvent.OnAddEditDeck -> {
                 val titleResult = validateTitle.execute(_state.value.title)
                 if(titleResult.successful) {
                     viewModelScope.launch {
@@ -112,20 +113,20 @@ class AddEditDeckViewModel @AssistedInject constructor(
                     ) }
                 }
             }
-            is AddDeckEvent.OnDescriptionChange -> { _state.update {it.copy(
+            is AddEditDeckEvent.OnDescriptionChange -> { _state.update {it.copy(
                 description = event.descriptionChange
                 ) }
             }
-            AddDeckEvent.OnDescriptionClear ->  { _state.update {it.copy(
+            AddEditDeckEvent.OnDescriptionClear ->  { _state.update {it.copy(
                 description = ""
             ) }
             }
-            is AddDeckEvent.OnTitleChange ->  { _state.update {it.copy(
+            is AddEditDeckEvent.OnTitleChange ->  { _state.update {it.copy(
                 title = event.titleChange,
                 titleError = null
             ) }
             }
-            AddDeckEvent.OnTitleClear ->  { _state.update {it.copy(
+            AddEditDeckEvent.OnTitleClear ->  { _state.update {it.copy(
                 title = ""
             ) }
             }
@@ -162,43 +163,38 @@ class ValidateTitle {
             )
         }
     }
-
-    data class ValidationResult(
-        val successful: Boolean,
-        val errorMessage: String? = null
-    )
 }
 
-data class AddDeckState(
+data class AddEditDeckState(
     val title: String = "",
     val description: String = "",
     val titleError: String? = null,
     val label: String = ""
 )
 
-sealed class AddDeckEvent {
-    object OnTitleClear: AddDeckEvent()
-    object OnDescriptionClear: AddDeckEvent()
-    data class OnTitleChange(val titleChange: String): AddDeckEvent()
-    data class OnDescriptionChange(val descriptionChange: String): AddDeckEvent()
-    object OnAddDeck: AddDeckEvent()
+sealed class AddEditDeckEvent {
+    object OnTitleClear: AddEditDeckEvent()
+    object OnDescriptionClear: AddEditDeckEvent()
+    data class OnTitleChange(val titleChange: String): AddEditDeckEvent()
+    data class OnDescriptionChange(val descriptionChange: String): AddEditDeckEvent()
+    object OnAddEditDeck: AddEditDeckEvent()
 }
 
 @Composable
 fun AddDeckDialog(
     onDismiss: () -> Unit,
-    state: AddDeckState,
-    onEvent: (AddDeckEvent) -> Unit,
+    state: AddEditDeckState,
+    onEvent: (AddEditDeckEvent) -> Unit,
 ) {
     AddDeckDialog(
         title = state.title,
         description = state.description,
         onDismiss = { onDismiss() },
-        onTitleChange =  { onEvent(AddDeckEvent.OnTitleChange(it)) },
-        onDescriptionChange =  { onEvent(AddDeckEvent.OnDescriptionChange(it)) },
-        onAddDeck =  { onEvent(AddDeckEvent.OnAddDeck) },
-        onTitleClear =  { onEvent(AddDeckEvent.OnTitleClear) },
-        onDescriptionClear =  { onEvent(AddDeckEvent.OnDescriptionClear) },
+        onTitleChange =  { onEvent(AddEditDeckEvent.OnTitleChange(it)) },
+        onDescriptionChange =  { onEvent(AddEditDeckEvent.OnDescriptionChange(it)) },
+        onAddDeck =  { onEvent(AddEditDeckEvent.OnAddEditDeck) },
+        onTitleClear =  { onEvent(AddEditDeckEvent.OnTitleClear) },
+        onDescriptionClear =  { onEvent(AddEditDeckEvent.OnDescriptionClear) },
         titleError = state.titleError,
         label = state.label
     )

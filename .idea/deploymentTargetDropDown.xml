@@ -2,26 +2,49 @@
 <project version="4">
   <component name="deploymentTargetDropDown">
     <value>
-      <entry key="AddDeckDialogPreview">
+      <entry key="AddEditFlashcardPreview">
         <State />
       </entry>
-      <entry key="NoteSummaryPreview">
+      <entry key="AddFeaturesBottomSheetPreview">
         <State />
       </entry>
-      <entry key="NotesScreenPreview">
-        <State />
-      </entry>
-      <entry key="SWDSearchBarPreview">
-        <State />
-      </entry>
-      <entry key="SWDSelectionBottomSheetPreview">
+      <entry key="ExampleScreen">
         <State />
       </entry>
       <entry key="app">
-        <State />
+        <State>
+          <targetSelectedWithDropDown>
+            <Target>
+              <type value="QUICK_BOOT_TARGET" />
+              <deviceKey>
+                <Key>
+                  <type value="VIRTUAL_DEVICE_PATH" />
+                  <value value="C:\Users\daba1\.android\avd\Pixel_6_Pro_API_33.avd" />
+                </Key>
+              </deviceKey>
+            </Target>
+          </targetSelectedWithDropDown>
+          <timeTargetWasSelectedWithDropDown value="2024-01-30T15:17:26.538478700Z" />
+        </State>
       </entry>
       <entry key="app.proto">
         <State />
+      </entry>
+      <entry key="studywithdabaonwearos">
+        <State>
+          <targetSelectedWithDropDown>
+            <Target>
+              <type value="QUICK_BOOT_TARGET" />
+              <deviceKey>
+                <Key>
+                  <type value="VIRTUAL_DEVICE_PATH" />
+                  <value value="C:\Users\daba1\.android\avd\Wear_OS_Small_Round_API_28.avd" />
+                </Key>
+              </deviceKey>
+            </Target>
+          </targetSelectedWithDropDown>
+          <timeTargetWasSelectedWithDropDown value="2024-01-30T17:09:20.605462700Z" />
+        </State>
       </entry>
     </value>
   </component>

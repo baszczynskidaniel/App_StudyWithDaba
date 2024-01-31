@@ -46,7 +46,7 @@ fun NoteSummaryItem(
     onClick: (Long) -> Unit,
     onLongClick: (Long, Boolean) -> Unit,
     onFavouriteClick: (Long, Boolean) -> Unit,
-    onMoreClick: () -> Unit,
+    onMoreClick: (Long) -> Unit,
 
     ) {
     Card(
@@ -81,7 +81,7 @@ fun NoteSummaryItem(
                     else
                         Icon(SWDIcons.FavouriteOutlined, null)
                 }
-                IconButton(onClick = { onMoreClick() }, modifier = Modifier
+                IconButton(onClick = { onMoreClick(note.noteId) }, modifier = Modifier
                     .height(intrinsicSize = IntrinsicSize.Max)
                     .width(intrinsicSize = IntrinsicSize.Max)
                 ) {

@@ -6,8 +6,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.example.studywithdaba.Navigation.Screen
 import com.example.studywithdaba.core.data.repository.UserDataRepository
 import com.example.studywithdaba.core.datastore.model.UserData
+import com.example.studywithdaba.core.design_system.component.AddFeaturesBottomSheetEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -15,6 +17,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import java.util.concurrent.Flow
 import javax.inject.Inject
 
@@ -44,14 +47,42 @@ class MainActivityViewModel @Inject constructor(
     fun onEvent(event: MainActivityEvent) {
         when(event) {
             is MainActivityEvent.OnCurrentRouteChange -> {
-                Log.d("grid size", _userData.value.userData.notesGridSize.toString())
                 event.navController.navigate(event.route)
             }
 
             MainActivityEvent.OnAdd -> {
+                _state.update { it.copy(
+                    showBottomSheet = true
+                ) }
+            }
+
+            is MainActivityEvent.OnBottomSheetEvent -> {
+                when(event.event) {
+                    AddFeaturesBottomSheetEvent.OnAddDeck -> _state.update { it.copy(
+                        showAddDeckDialog = true
+                    ) }
+                    AddFeaturesBottomSheetEvent.OnAddFlashcards -> _state.update { it.copy(
+                        showAddFlashcardDialog = true
+                    ) }
+                    AddFeaturesBottomSheetEvent.OnAddNote -> {
+                        _state.update { it.copy(
+                            showBottomSheet = false
+                        ) }
+                        event.navController.navigate(Screen.EditNote.route)
+                    }
+                    AddFeaturesBottomSheetEvent.OnDismiss -> _state.update { it.copy(
+                        showBottomSheet = false
+                    ) }
+                }
 
             }
 
+            MainActivityEvent.OnDismissAddDeckDialog -> _state.update { it.copy(
+                showAddDeckDialog = false
+            ) }
+            MainActivityEvent.OnDismissAddFlashcardDialog -> _state.update { it.copy(
+                showAddFlashcardDialog = false
+            ) }
         }
     }
 }
@@ -61,4 +92,6 @@ data class MainActivityState (
     val userData: UserData = UserData(),
     val showNavigationBar: Boolean = true,
     val showBottomSheet: Boolean = false,
+    val showAddFlashcardDialog: Boolean = false,
+    val showAddDeckDialog: Boolean = false,
 )

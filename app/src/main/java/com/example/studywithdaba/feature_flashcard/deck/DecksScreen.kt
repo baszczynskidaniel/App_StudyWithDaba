@@ -25,7 +25,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -40,8 +39,6 @@ import com.example.dabastudy.core.database.model.entities.relations.DeckWithDeck
 import com.example.studywithdaba.core.design_system.icon.SWDIcons
 import com.example.studywithdaba.core.design_system.theme.LocalDimensions
 import com.example.studywithdaba.core.design_system.theme.StudyWithDabaTheme
-import com.example.studywithdaba.feature_note.NotesEvent
-import com.example.studywithdaba.feature_note.toTimeDateString
 
 
 data class DecksState(
@@ -52,10 +49,11 @@ data class DecksState(
 )
 
 sealed class DecksEvent {
-    data class OnDeckClick(val deckId: Long): DecksEvent()
+    data class OnSettings(val navController: NavController): DecksEvent()
+    data class OnDeckClick(val deckId: Long, val navController: NavController): DecksEvent()
     data class OnDeckLongClick(val deckId: Long, val selectedChange: Boolean): DecksEvent()
     data class OnDeckFavouriteClick(val deckId: Long, val favouriteChange: Boolean): DecksEvent()
-    object OnAddDeck: DecksEvent()
+    data class OnAddDeck(val navController: NavController): DecksEvent()
     data class OnDeckMoreClick(val deckId: Long): DecksEvent()
 }
 
@@ -73,7 +71,11 @@ fun DecksScreen(
                 .fillMaxSize()
                 .padding(bottom = innerPaddingValues.calculateBottomPadding())
         ) {
-            CenterAlignedTopAppBar(title = { Text(text = "Flashcards Decks") })
+            CenterAlignedTopAppBar(title = { Text(text = "Flashcards Decks") }, actions = {
+                IconButton(onClick = { onEvent(DecksEvent.OnSettings(navController)) }) {
+                    Icon(SWDIcons.SettingsFilled, null)
+                }
+            })
             LazyVerticalStaggeredGrid(
                 columns = StaggeredGridCells.Fixed(state.gridSize), horizontalArrangement = Arrangement.spacedBy(
                     LocalDimensions.current.defaultPadding),
@@ -85,7 +87,7 @@ fun DecksScreen(
                         selected = state.selectedDecksIds.isNotEmpty()
                                 && state.decks[index].deck.deckId in state.selectedDecksIds,
                         onClick = {
-                                  onEvent(DecksEvent.OnDeckClick(it))
+                                  onEvent(DecksEvent.OnDeckClick(it, navController))
                         },
                         onLongClick = { deckId, selectedChange ->
                               onEvent(DecksEvent.OnDeckLongClick(deckId, selectedChange))
@@ -100,10 +102,11 @@ fun DecksScreen(
                 }
             }
         }
-        FloatingActionButton(onClick = { onEvent(DecksEvent.OnAddDeck) }, modifier = Modifier
+        FloatingActionButton(onClick = { onEvent(DecksEvent.OnAddDeck(navController)) }, modifier = Modifier
             .padding(
                 LocalDimensions.current.defaultPadding
             )
+            .padding(bottom = innerPaddingValues.calculateBottomPadding())
             .align(Alignment.BottomEnd)) {
             Icon(imageVector = SWDIcons.Add, contentDescription = null)
         }

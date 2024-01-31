@@ -2,6 +2,8 @@ package com.example.studywithdaba.core.data.di
 
 import com.example.studywithdaba.core.data.repository.DeckRepository
 import com.example.studywithdaba.core.data.repository.DeckRepositoryImpl
+import com.example.studywithdaba.core.data.repository.FlashcardRepository
+import com.example.studywithdaba.core.data.repository.FlashcardRepositoryImpl
 import com.example.studywithdaba.core.data.repository.NoteRepository
 import com.example.studywithdaba.core.data.repository.NoteRepositoryImpl
 import com.example.studywithdaba.core.data.repository.SearchHistoryRepository
@@ -17,6 +19,14 @@ import dagger.hilt.components.SingletonComponent
 @InstallIn(SingletonComponent::class)
 interface DataModule {
     @Binds
+    fun bindDeckRepository(
+        deckRepository: DeckRepositoryImpl,
+    ): DeckRepository
+    @Binds
+    fun bindFlashcardRepository(
+        flashcardRepository: FlashcardRepositoryImpl,
+    ): FlashcardRepository
+    @Binds
     fun bindsUserDataRepository(
         userDataRepository: UserDataRepositoryImpl,
     ): UserDataRepository
@@ -31,8 +41,6 @@ interface DataModule {
         noteRepository: NoteRepositoryImpl,
     ): NoteRepository
 
-    @Binds
-    fun bindDeckRepository(
-        deckRepository: DeckRepositoryImpl,
-    ): DeckRepository
+
+
 }
