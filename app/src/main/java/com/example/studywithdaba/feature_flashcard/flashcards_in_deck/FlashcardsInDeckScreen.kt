@@ -28,12 +28,14 @@ import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.IconToggleButton
+import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
@@ -48,6 +50,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.dabastudy.core.database.model.entities.Flashcard
+import com.example.studywithdaba.core.design_system.component.SWDBottomSheet
 import com.example.studywithdaba.core.design_system.icon.SWDIcons
 import com.example.studywithdaba.core.design_system.theme.LocalDimensions
 
@@ -59,6 +62,9 @@ fun FlashcardsInDeckScreen(
     navController: NavController
 ) {
     FlashcardsInDeckScreen(
+        navController = navController,
+        showFlashcardBottomSheet = state.showFlashcardBottomSheet,
+        bottomSheetFlashcardId = state.bottomSheetFlashcardId,
         deckTitle = state.deckTitle,
         visibleBackFlashcardIds = state.visibleBackFlashcardIds,
         flashcards = state.flashcards,
@@ -70,13 +76,17 @@ fun FlashcardsInDeckScreen(
         onQuiz = { onEvent(FlashcardsInDeckEvent.OnQuiz(navController)) },
         onReview = { onEvent(FlashcardsInDeckEvent.OnReview(navController)) },
         onAddFlashcard = { onEvent(FlashcardsInDeckEvent.OnAddFlashcard(navController)) },
-        onMenuFlashcard = {}
+        onMenuFlashcard = { onEvent(FlashcardsInDeckEvent.OnMenuFlashcard(it))},
+        onFlashcardBottomSheetEvent = { onEvent(FlashcardsInDeckEvent.OnFlashcardBottomSheetEvent(it))}
     )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FlashcardsInDeckScreen(
+    navController: NavController,
+    showFlashcardBottomSheet: Boolean,
+    bottomSheetFlashcardId: Long,
     deckTitle: String,
     visibleBackFlashcardIds: Set<Long>,
     flashcards: List<Flashcard>,
@@ -89,6 +99,8 @@ fun FlashcardsInDeckScreen(
     onReview: () -> Unit,
     onAddFlashcard: () -> Unit,
     onMenuFlashcard: (Long) -> Unit,
+
+    onFlashcardBottomSheetEvent: (FlashcardBottomSheetEvent) -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -164,6 +176,9 @@ fun FlashcardsInDeckScreen(
                 )
             }
         }
+    }
+    if(showFlashcardBottomSheet) {
+        FlashcardBottomSheet(onEvent = { onFlashcardBottomSheetEvent(it)}, noteId = bottomSheetFlashcardId, navController = navController)
     }
 }
 
@@ -299,6 +314,51 @@ fun HorizontalFlashcardItem(
                 }
             }
         }
+    }
+}
+
+
+sealed class FlashcardBottomSheetEvent {
+    object OnDismiss: FlashcardBottomSheetEvent()
+    data class OnRemoveFlashcard(val flashcardId: Long): FlashcardBottomSheetEvent()
+    data class OnEditFlashcard(val flashcardId: Long, val navController: NavController): FlashcardBottomSheetEvent()
+}
+@Composable
+fun FlashcardBottomSheet(
+    onEvent: (FlashcardBottomSheetEvent) -> Unit,
+    noteId: Long,
+    navController: NavController,
+) {
+    SWDBottomSheet(onDismiss = { onEvent(FlashcardBottomSheetEvent.OnDismiss) }, title = "Flashcard option") {
+        Divider(thickness = LocalDimensions.current.dividerThickness)
+        ListItem(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable { onEvent(FlashcardBottomSheetEvent.OnRemoveFlashcard(noteId)) },
+            headlineContent = { Text(text = "Remove flashcard from deck") },
+            leadingContent = {
+                Icon(SWDIcons.DeleteOutlined, null)
+            }
+        )
+        Divider(thickness = LocalDimensions.current.dividerThickness)
+        ListItem(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable {
+                    onEvent(
+                        FlashcardBottomSheetEvent.OnEditFlashcard(
+                            noteId,
+                            navController
+                        )
+                    )
+                },
+            headlineContent = { Text(text = "Edit flashcard") },
+            leadingContent = {
+                Icon(SWDIcons.Edit, null)
+            }
+        )
+        Divider(thickness = LocalDimensions.current.dividerThickness)
+
     }
 }
 

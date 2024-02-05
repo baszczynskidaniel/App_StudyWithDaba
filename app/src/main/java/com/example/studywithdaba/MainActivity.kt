@@ -179,49 +179,5 @@ fun MainScaffold(
         if(state.showBottomSheet) {
             AddFeaturesBottomSheet(onEvent = {onEvent(MainActivityEvent.OnBottomSheetEvent(it, navController))})
         }
-
-        if(state.showAddDeckDialog) {
-
-            val viewModel = addEditDeckViewModel(deckId = null)
-            val state = viewModel.state.collectAsState()
-            AddDeckDialog(onDismiss = { onEvent(MainActivityEvent.OnDismissAddDeckDialog) }, state = state.value, onEvent = viewModel::onEvent)
-            val context = LocalContext.current
-            LaunchedEffect(key1 = true) {
-                viewModel.validationEvent.collect { event ->
-                    when (event) {
-                        is AddEditDeckViewModel.ValidationEvent.Success -> {
-                            onEvent(MainActivityEvent.OnDismissAddDeckDialog)
-                            snackbarHostState.showSnackbar("Added deck: ", actionLabel = event.deckName)
-
-                        }
-                    }
-                }
-            }
-        }
-
-        if(state.showAddFlashcardDialog) {
-
-            val viewModel = addEditFlashcardViewModel(flashcardAndDeckId = FlashcardAndDeckId(null, null))
-            val state = viewModel.state.collectAsState()
-            AddEditFlashcardDialog(
-                state = state.value,
-                onEvent = viewModel::onEvent,
-                onDismiss = { onEvent(MainActivityEvent.OnDismissAddFlashcardDialog)}
-            )
-            val context = LocalContext.current
-            LaunchedEffect(key1 = true) {
-
-                viewModel.validationEvent.collect { event ->
-                    when (event) {
-
-                        AddEditFlashcardViewModel.ValidationEvent.Success -> {
-
-                            snackbarHostState.showSnackbar("Added flashcard")
-                        }
-
-                    }
-                }
-            }
-        }
     }
 }

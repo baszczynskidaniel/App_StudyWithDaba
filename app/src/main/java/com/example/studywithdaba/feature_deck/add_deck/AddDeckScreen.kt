@@ -18,7 +18,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.ExperimentalComposeUiApi
@@ -33,12 +32,14 @@ import com.example.studywithdaba.core.design_system.theme.LocalDimensions
 
 
 @Composable
-fun AddDeckScreen(
+fun AddEditDeckScreen(
     state: AddDeckState,
     onEvent: (AddDeckEvent) -> Unit,
     navController: NavController
 ) {
-    AddDeckScreen(
+    AddEditDeckScreen(
+        topBarLabel = "Add deck",
+        confirmButtonText = "Add deck",
         title = state.title,
         description = state.description,
         titleError = state.titleError,
@@ -56,7 +57,9 @@ fun AddDeckScreen(
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 @Composable
-fun AddDeckScreen(
+fun AddEditDeckScreen(
+    topBarLabel: String,
+    confirmButtonText: String,
     title: String,
     description: String,
     titleError: String?,
@@ -88,7 +91,7 @@ fun AddDeckScreen(
             modifier = Modifier.weight(1f),
         ) {
             CenterAlignedTopAppBar(
-                title = { Text("Add Deck") },
+                title = { Text(topBarLabel) },
                 navigationIcon = {
                     IconButton(onClick = { onBack() }) {
                         Icon(imageVector = SWDIcons.Back, contentDescription = null)
@@ -160,7 +163,7 @@ fun AddDeckScreen(
             )
         }
         Button(onClick = { onAddDeck() }, modifier = Modifier.fillMaxWidth() ) {
-            Text(text = "Add deck")
+            Text(text = confirmButtonText)
         }
     }
 }

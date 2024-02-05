@@ -1,5 +1,6 @@
 package com.example.studywithdaba.feature_flashcard.quiz
 
+import android.util.Log
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.SavedStateHandle
@@ -7,7 +8,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import com.example.dabastudy.core.database.model.entities.Flashcard
-import com.example.studywithdaba.core.data.repository.DeckRepository
 import com.example.studywithdaba.core.data.repository.FlashcardRepository
 import com.example.studywithdaba.feature_flashcard.study_summary.StudySummaryEvent
 import com.example.studywithdaba.feature_flashcard.study_summary.StudySummaryState
@@ -34,6 +34,7 @@ class QuizViewModel @Inject constructor(
             flashcards = flashcardRepository.getFlashcardsInDeck(deckId).first()
             val generatedQuizQuestions = generateQuestionsForFront(flashcards)
             _state.value = _state.value.copy(
+                enableCheck = true,
                 quizQuestions = generatedQuizQuestions,
                 currentQuestion = generatedQuizQuestions.first(),
                 progressMessage = getProgressMessage(0, generatedQuizQuestions.size)
@@ -142,6 +143,7 @@ class QuizViewModel @Inject constructor(
             StudySummaryEvent.OnTryAgain -> {
                 val generatedQuizQuestions = generateQuestionsForFront(flashcards)
                 _state.value = _state.value.copy(
+                    enableCheck = true,
                     quizQuestions = generatedQuizQuestions,
                     currentQuestion = generatedQuizQuestions.first(),
                     answeredQuestions = 0,
@@ -160,6 +162,7 @@ class QuizViewModel @Inject constructor(
     private fun onDismissResult() {
         if(_state.value.answeredQuestions + 1 >= _state.value.quizQuestions.size) {
             _state.value = _state.value.copy(
+                enableCheck = false,
                 showSummary = true,
                 showResult = false,
                 answeredQuestions = _state.value.answeredQuestions + 1,
@@ -169,6 +172,7 @@ class QuizViewModel @Inject constructor(
         } else {
             val nextQuestion = _state.value.quizQuestions[_state.value.answeredQuestions + 1]
             _state.value = _state.value.copy(
+                enableCheck = true,
                 showResult = false,
                 answeredQuestions = _state.value.answeredQuestions + 1,
                 currentQuestion = nextQuestion,
@@ -182,11 +186,14 @@ class QuizViewModel @Inject constructor(
 
     private fun onCheck() {
         _state.value = _state.value.copy(
+            enableCheck = false,
             isCurrentPickedAnswerCorrect = _state.value.currentQuestion!!.isAnswerWithIndexCorrect(_state.value.currentPickedAnswer),
             showResult = true,
             checkContinueButtonName = "CONTINUE",
             summary = _state.value.summary.getSummaryWithNewAnswer(_state.value.currentQuestion!!.isAnswerWithIndexCorrect(_state.value.currentPickedAnswer))
         )
+
+
     }
 
 

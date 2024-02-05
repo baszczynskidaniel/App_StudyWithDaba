@@ -9,6 +9,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.AssistChip
+import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -48,7 +50,7 @@ fun RepeatScreen(
                 viewModel.onEvent(RepeatEvent.OnBack(navController))
             },
 
-            progress = state.value.reviewSummary.getProgress(state.value.flashcards.size - 1)
+            progress = state.value.reviewSummary.getProgress(state.value.flashcards.size)
         )
 
         Column(
@@ -70,8 +72,8 @@ fun RepeatScreen(
                 }, modifier = Modifier.weight(1f, false))
             Answer(
                 onCorrectClick = { viewModel.onEvent(RepeatEvent.OnCorrectAnswer) },
-                onWrongClick = { viewModel.onEvent(RepeatEvent.OnWrongAnswer) }
-
+                onWrongClick = { viewModel.onEvent(RepeatEvent.OnWrongAnswer) },
+                enabled = !state.value.showSummaryDialog
             )
         }
 
@@ -89,24 +91,16 @@ fun RepeatScreen(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RepeatFlashcardTopBar(
     onBack: () -> Unit,
     progress: String
 ) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(MaterialTheme.colorScheme.surfaceVariant),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(LocalDimensions.current.defaultPadding)
-    ) {
+    CenterAlignedTopAppBar(title = { Text(text = progress) }, navigationIcon = {
         IconButton(onClick = { onBack() }) {
             Icon(SWDIcons.Back, null, tint = MaterialTheme.colorScheme.onSurfaceVariant)
         }
-        Text(text = progress, textAlign = TextAlign.Center, style = MaterialTheme.typography.titleLarge, color = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier
-            .fillMaxWidth()
-            .weight(1f))
+    })
 
-    }
 }

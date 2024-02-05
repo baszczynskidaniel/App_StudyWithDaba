@@ -41,4 +41,8 @@ class DeckRepositoryImpl @Inject constructor(
         deckDao.updateDeckFavourite(deckId, favourite)
     }
 
+    override suspend fun updateDeck(deckId: Long, title: String, description: String) {
+        deckDao.updateDeck(deckId, title, description)
+    }
+
 }

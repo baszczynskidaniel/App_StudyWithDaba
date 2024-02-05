@@ -13,13 +13,16 @@ data class QuizState(
     val isCurrentPickedAnswerCorrect: Boolean = false,
     val checkContinueButtonName: String = "CHECK",
     val summary: StudySummaryState = StudySummaryState(),
-)
+    val enableCheck: Boolean = true,
+
+    )
 
 data class QuizQuestion(
     val question: String = "",
     val answers: List<String> = emptyList(),
     val correctAnswerIndex: Int = -1,
-    val isQuestionForFront: Boolean = true
+    val isQuestionForFront: Boolean = true,
+
 ) {
     fun isAnswerWithIndexCorrect(index: Int): Boolean {
         return index == correctAnswerIndex

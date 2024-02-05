@@ -3,6 +3,7 @@ package com.example.studywithdaba.feature_flashcard.deck
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -21,10 +22,12 @@ import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -36,26 +39,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
 import com.example.dabastudy.core.database.model.entities.Deck
 import com.example.dabastudy.core.database.model.entities.relations.DeckWithDeckSummary
+import com.example.studywithdaba.core.design_system.component.SWDBottomSheet
 import com.example.studywithdaba.core.design_system.icon.SWDIcons
 import com.example.studywithdaba.core.design_system.theme.LocalDimensions
 import com.example.studywithdaba.core.design_system.theme.StudyWithDabaTheme
 
 
-data class DecksState(
-    val decks: List<DeckWithDeckSummary> = emptyList(),
-    val gridSize: Int = 2,
-    val selectedDecksIds: Set<Long> = emptySet()
 
-)
-
-sealed class DecksEvent {
-    data class OnSettings(val navController: NavController): DecksEvent()
-    data class OnDeckClick(val deckId: Long, val navController: NavController): DecksEvent()
-    data class OnDeckLongClick(val deckId: Long, val selectedChange: Boolean): DecksEvent()
-    data class OnDeckFavouriteClick(val deckId: Long, val favouriteChange: Boolean): DecksEvent()
-    data class OnAddDeck(val navController: NavController): DecksEvent()
-    data class OnDeckMoreClick(val deckId: Long): DecksEvent()
-}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -77,6 +67,7 @@ fun DecksScreen(
                 }
             })
             LazyVerticalStaggeredGrid(
+                modifier = Modifier.padding(LocalDimensions.current.defaultPadding),
                 columns = StaggeredGridCells.Fixed(state.gridSize), horizontalArrangement = Arrangement.spacedBy(
                     LocalDimensions.current.defaultPadding),
                 verticalItemSpacing = LocalDimensions.current.defaultPadding
@@ -111,11 +102,15 @@ fun DecksScreen(
             Icon(imageVector = SWDIcons.Add, contentDescription = null)
         }
     }
+    if(state.showDeckBottomSheet) {
+        DeckBottomSheet(onEvent = { onEvent(DecksEvent.OnDeckBottomSheetEvent(it))}, deckId = state.selectedDeckId, navController = navController)
+    }
 }
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun DeckItem(
+
     modifier: Modifier = Modifier,
     deckSummary: DeckWithDeckSummary,
     selected: Boolean,
@@ -190,6 +185,53 @@ fun DeckItem(
 
 
         }
+    }
+
+
+}
+
+
+sealed class DeckBottomSheetEvent {
+    object OnDismiss: DeckBottomSheetEvent()
+    data class OnRemoveDeck(val deckId: Long): DeckBottomSheetEvent()
+    data class OnEditDeck(val deckId: Long, val navController: NavController): DeckBottomSheetEvent()
+}
+@Composable
+fun DeckBottomSheet(
+    onEvent: (DeckBottomSheetEvent) -> Unit,
+    deckId: Long,
+    navController: NavController,
+) {
+    SWDBottomSheet(onDismiss = { onEvent(DeckBottomSheetEvent.OnDismiss) }, title = "Deck option") {
+        Divider(thickness = LocalDimensions.current.dividerThickness)
+        ListItem(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable { onEvent(DeckBottomSheetEvent.OnRemoveDeck(deckId)) },
+            headlineContent = { Text(text = "Remove deck") },
+            leadingContent = {
+                Icon(SWDIcons.DeleteOutlined, null)
+            }
+        )
+        Divider(thickness = LocalDimensions.current.dividerThickness)
+        ListItem(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable {
+                    onEvent(
+                        DeckBottomSheetEvent.OnEditDeck(
+                            deckId,
+                            navController
+                        )
+                    )
+                },
+            headlineContent = { Text(text = "Edit Deck") },
+            leadingContent = {
+                Icon(SWDIcons.Edit, null)
+            }
+        )
+        Divider(thickness = LocalDimensions.current.dividerThickness)
+
     }
 }
 

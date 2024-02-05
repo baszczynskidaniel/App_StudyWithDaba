@@ -1,5 +1,6 @@
 package com.example.richtextfield
 
+import android.util.Log
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextRange
@@ -8,7 +9,7 @@ import androidx.compose.ui.text.withStyle
 open class TextTokenManager<T>(var defaultValue: T) {
 
     var selectedValue: T = defaultValue
-    var tokens: MutableList<TextToken<T>> = mutableListOf(TextToken(0, defaultValue))
+    var tokens: MutableList<StyleToken<T>> = mutableListOf(StyleToken(0, defaultValue))
     var textLength: Int = 0
 
 
@@ -69,7 +70,7 @@ open class TextTokenManager<T>(var defaultValue: T) {
 
     private fun moveBackwardTokenByStepFromIndex(index: Int, step: Int) {
         var counter = 0
-        val removedTokens: MutableList<TextToken<T>> = mutableListOf()
+        val removedTokens: MutableList<StyleToken<T>> = mutableListOf()
         while (counter < tokens.size) {
             if (tokens[counter].start < index) {
                 counter++
@@ -85,23 +86,24 @@ open class TextTokenManager<T>(var defaultValue: T) {
         if (!removedTokens.isEmpty()) {
             val firstRemovedToken = removedTokens.first()
             if (!doesTokenWithStartExists(index)) {
-                tokens.add(TextToken(index, firstRemovedToken.value))
+                tokens.add(StyleToken(index, firstRemovedToken.value))
             }
         }
 
         if (!doesTokenWithStartExists(0)) {
             if (tokens.isEmpty())
-                tokens.add(TextToken(0, defaultValue))
+                tokens.add(StyleToken(0, defaultValue))
             else
-                tokens.add(TextToken(0, getValueAfterIndex(0)!!))
+                tokens.add(StyleToken(0, getValueAfterIndex(0)!!))
         }
         processAndFilterTokens()
     }
 
 
     private fun setValueInRange(start: Int, end: Int, value: T) {
+
         var counter = 0
-        val removedTokens: MutableList<TextToken<T>> = mutableListOf()
+        val removedTokens: MutableList<StyleToken<T>> = mutableListOf()
         val isTokenFromEnd = getValueAfterIndex(end - 1) != null
         while (counter < tokens.size) {
             if (tokens[counter].start >= start && tokens[counter].start < end) {
@@ -112,11 +114,13 @@ open class TextTokenManager<T>(var defaultValue: T) {
             }
             counter++
         }
-        tokens.add(TextToken(start, value))
+        tokens.add(StyleToken(start, value))
         if (!doesTokenWithStartExists(end) && removedTokens.isNotEmpty()) {
-            tokens.add(TextToken(end, removedTokens.first().value))
-        } else if (isTokenFromEnd && getValueBeforeIndex(start + 1) != null) {
-            tokens.add(TextToken(end, getValueBeforeIndex(start)!!))
+            tokens.add(StyleToken(end, removedTokens.last().value))
+        } else if (isTokenFromEnd && getValueBeforeIndex(start) != null) {
+            tokens.add(StyleToken(end, getValueBeforeIndex(start)!!))
+        } else if (!isTokenFromEnd && getValueBeforeIndex(start) != null) {
+            tokens.add(StyleToken(end, getValueBeforeIndex(start)!!))
         }
 
 
@@ -171,13 +175,13 @@ open class TextTokenManager<T>(var defaultValue: T) {
     private fun insertToken(index: Int, value: T, step: Int) {
         if (step <= 0)
             return
-        val token = TextToken<T>(index, value)
+        val token = StyleToken<T>(index, value)
         val tokenBeforeIndex = getTokenBeforeIndex(index)
         val doesTokenAtIndexExists = doesTokenWithStartExists(index)
         moveForwardTokenByStepFromIndex(index, step, true)
         tokens.add(token)
         if (!doesTokenAtIndexExists && tokenBeforeIndex != null)
-            tokens.add(TextToken(index + step, tokenBeforeIndex.value))
+            tokens.add(StyleToken(index + step, tokenBeforeIndex.value))
 
         processAndFilterTokens()
     }
@@ -190,8 +194,8 @@ open class TextTokenManager<T>(var defaultValue: T) {
         return false
     }
 
-    fun getTokenBeforeIndex(index: Int): TextToken<T>? {
-        var lastToken: TextToken<T>? = null
+    fun getTokenBeforeIndex(index: Int): StyleToken<T>? {
+        var lastToken: StyleToken<T>? = null
         for (token in tokens) {
             if (token.start >= index) {
                 return lastToken

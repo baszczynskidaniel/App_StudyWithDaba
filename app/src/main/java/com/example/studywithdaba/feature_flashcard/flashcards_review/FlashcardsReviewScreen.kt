@@ -64,6 +64,7 @@ fun FlashcardsReviewScreen(
             progress = if(state.value.settings.infiniteMode) {
                 state.value.reviewSummary.getProgressInInfinityMode()
             } else {
+
                 state.value.reviewSummary.getProgress(state.value.flashcardsInReview.size)
             }
         )
@@ -101,7 +102,9 @@ fun FlashcardsReviewScreen(
                 }, modifier = Modifier.weight(1f, false))
             Answer(
                 onCorrectClick = { viewModel.onEvent(FlashcardsReviewEvent.OnCorrectAnswer) },
-                onWrongClick = { viewModel.onEvent(FlashcardsReviewEvent.OnWrongAnswer) }
+                onWrongClick = {
+                    viewModel.onEvent(FlashcardsReviewEvent.OnWrongAnswer) },
+                enabled = !(state.value.showSettingsDialog || state.value.showSettingsDialog)
 
             )
         }
@@ -201,6 +204,7 @@ fun FlippableFlashcard(
 
 @Composable
 fun Answer(
+    enabled: Boolean,
     modifier: Modifier = Modifier,
     onCorrectClick: () -> Unit,
     onWrongClick: () -> Unit,
@@ -213,14 +217,14 @@ fun Answer(
         ,
         horizontalArrangement = Arrangement.spacedBy(LocalDimensions.current.defaultPadding)
     ) {
-        FilledIconButton(onClick = { onWrongClick() }, modifier = Modifier
+        FilledIconButton(onClick = { onWrongClick() }, enabled = enabled, modifier = Modifier
             .height(LocalDimensions.current.bigIconButton)
             .fillMaxWidth()
             .weight(1f)) {
             Icon(imageVector = SWDIcons.Clear, contentDescription = null, modifier= Modifier.size(
                 LocalDimensions.current.bigIcon))
         }
-        FilledIconButton(onClick = { onCorrectClick() },  modifier = Modifier
+        FilledIconButton(onClick = { onCorrectClick() }, enabled = enabled,  modifier = Modifier
             .height(LocalDimensions.current.bigIconButton)
             .fillMaxWidth()
             .weight(1f)) {

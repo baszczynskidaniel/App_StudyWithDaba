@@ -20,6 +20,9 @@ interface DeckDao {
 
     @Query("update deck set favourite = :favourite where deckId = :deckId")
     suspend fun updateDeckFavourite(deckId: Long, favourite: Boolean)
+
+    @Query("update deck set title = :title, description = :description where deckId = :deckId")
+    suspend fun updateDeck(deckId: Long, title: String, description: String)
     @Query("select * from deck")
     fun getDecks(): Flow<List<Deck>>
 

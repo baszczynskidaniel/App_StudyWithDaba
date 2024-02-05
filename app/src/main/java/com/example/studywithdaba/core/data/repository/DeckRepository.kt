@@ -14,4 +14,5 @@ interface DeckRepository {
     fun getDecksInFlashcard(flashcardId: Long): Flow<List<Deck>>
     fun getDecks(): Flow<List<Deck>>
     suspend fun updateDeckFavourite(deckId: Long, favourite: Boolean)
+    suspend fun updateDeck(deckId: Long, title: String, description: String)
 }

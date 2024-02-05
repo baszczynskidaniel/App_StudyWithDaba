@@ -32,18 +32,18 @@
       </entry>
       <entry key="studywithdabaonwearos">
         <State>
-          <targetSelectedWithDropDown>
+          <runningDeviceTargetSelectedWithDropDown>
             <Target>
-              <type value="QUICK_BOOT_TARGET" />
+              <type value="RUNNING_DEVICE_TARGET" />
               <deviceKey>
                 <Key>
-                  <type value="VIRTUAL_DEVICE_PATH" />
-                  <value value="C:\Users\daba1\.android\avd\Wear_OS_Small_Round_API_28.avd" />
+                  <type value="SERIAL_NUMBER" />
+                  <value value="LMG900EMc49f8bdf" />
                 </Key>
               </deviceKey>
             </Target>
-          </targetSelectedWithDropDown>
-          <timeTargetWasSelectedWithDropDown value="2024-01-30T17:09:20.605462700Z" />
+          </runningDeviceTargetSelectedWithDropDown>
+          <timeTargetWasSelectedWithDropDown value="2024-02-05T11:16:33.053599500Z" />
         </State>
       </entry>
     </value>

@@ -1,30 +1,29 @@
 package com.example.studywithdaba.Navigation
 
-import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.example.studywithdaba.feature.settings.SettingScreen
-import com.example.studywithdaba.feature.settings.SettingsEvent
-import com.example.studywithdaba.feature.settings.SettingsScreen
-import com.example.studywithdaba.feature.settings.SettingsState
 import com.example.studywithdaba.feature.settings.SettingsViewModel
-import com.example.studywithdaba.feature_deck.add_deck.AddDeckScreen
+import com.example.studywithdaba.feature_deck.add_deck.AddEditDeckScreen
 import com.example.studywithdaba.feature_deck.add_deck.AddDeckViewModel
+import com.example.studywithdaba.feature_deck.edit_deck.EditDeckScreen
+import com.example.studywithdaba.feature_deck.edit_deck.EditDeckViewModel
 import com.example.studywithdaba.feature_flashcard.RepeatScreen
 import com.example.studywithdaba.feature_flashcard.add_flashcard.AddFlashcardScreen
 import com.example.studywithdaba.feature_flashcard.add_flashcard.AddFlashcardViewModel
 import com.example.studywithdaba.feature_flashcard.deck.DecksScreen
 import com.example.studywithdaba.feature_flashcard.deck.DecksViewModel
+import com.example.studywithdaba.feature_flashcard.edit_flashcard.EditFlashcardScreen
+import com.example.studywithdaba.feature_flashcard.edit_flashcard.EditFlashcardViewModel
 import com.example.studywithdaba.feature_flashcard.flashcards_in_deck.FlashcardsInDeckScreen
 import com.example.studywithdaba.feature_flashcard.flashcards_in_deck.FlashcardsInDeckViewModel
 import com.example.studywithdaba.feature_flashcard.flashcards_review.FlashcardsReviewScreen
@@ -33,7 +32,6 @@ import com.example.studywithdaba.feature_home.HomeScreen
 import com.example.studywithdaba.feature_note.NotesScreen
 import com.example.studywithdaba.feature_note.NotesViewModel
 import com.example.studywithdaba.feature_note.edit_note.EditNoteScreen
-import com.example.studywithdaba.feature_note.edit_note.EditNoteViewModel
 
 @Composable
 fun NavigationGraph(navController: NavHostController, innerPadding: PaddingValues) {
@@ -90,6 +88,45 @@ fun NavigationGraph(navController: NavHostController, innerPadding: PaddingValue
             FlashcardsReviewScreen(navController)
         }
         composable(
+            Screen.EditFlashcard.route + "?flashcardId={flashcardId}",
+            arguments = listOf(
+                navArgument(name = "flashcardId")
+                {
+                    type = NavType.LongType
+                    defaultValue = -1
+                }
+            )
+        ) {
+            val viewModel: EditFlashcardViewModel = hiltViewModel()
+            val state = viewModel.state.collectAsState()
+            EditFlashcardScreen(
+                navController = navController,
+                state = state.value,
+                onEvent = viewModel::onEvent
+            )
+        }
+
+
+        composable(
+            Screen.EditDeck.route + "?deckId={deckId}",
+            arguments = listOf(
+                navArgument(name = "deckId")
+                {
+                    type = NavType.LongType
+                    defaultValue = -1
+                }
+            )
+        ) {
+            val viewModel: EditDeckViewModel = hiltViewModel()
+            val state = viewModel.state.collectAsState()
+            EditDeckScreen(
+                navController = navController,
+                state = state.value,
+                onEvent = viewModel::onEvent
+            )
+        }
+
+        composable(
             Screen.Quiz.route + "?deckId={deckId}",
             arguments = listOf(
                 navArgument(name = "deckId")
@@ -133,7 +170,7 @@ fun NavigationGraph(navController: NavHostController, innerPadding: PaddingValue
         ) {
             val viewModel: AddDeckViewModel = hiltViewModel()
             val state = viewModel.state.collectAsState()
-            AddDeckScreen(
+            AddEditDeckScreen(
                 onEvent = viewModel::onEvent,
                 state = state.value,
                 navController =  navController,

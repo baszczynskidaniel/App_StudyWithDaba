@@ -1,7 +1,6 @@
 package com.example.richtextfield
 
 import android.util.Log
-import android.util.TypedValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
@@ -12,7 +11,6 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextDecoration
-import androidx.core.graphics.toColor
 import com.google.gson.Gson
 
 data class RichTextString(
@@ -104,7 +102,7 @@ class RichTextValue {
         this.text.value = TextFieldValue(text)
         styleManager.tokens.clear()
         richTextString.forEach {  text ->
-            val token = TextToken<SpanStyle>(
+            val token = StyleToken<SpanStyle>(
                 start = text.start,
                 value = RichTextString.toSpanStyle(defaultStyle, text)
             )
@@ -153,7 +151,7 @@ class RichTextValue {
     }
 }
 
-data class TextToken<T>(
+data class StyleToken<T>(
     var start: Int,
     var value: T,
 )

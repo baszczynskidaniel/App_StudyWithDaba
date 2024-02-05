@@ -32,7 +32,9 @@ data class StudySummaryState(
     }
 
     fun getProgress(totalNumber: Int): String {
-        return "${correctNumber + wrongNumber + 1} / ${totalNumber + 1}"
+        if(correctNumber + wrongNumber + 1 > totalNumber)
+            return "$totalNumber / $totalNumber"
+        return "${correctNumber + wrongNumber + 1} / ${totalNumber}"
     }
     fun getProgressInInfinityMode(): String
     {

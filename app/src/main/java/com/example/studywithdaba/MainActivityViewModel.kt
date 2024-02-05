@@ -58,12 +58,18 @@ class MainActivityViewModel @Inject constructor(
 
             is MainActivityEvent.OnBottomSheetEvent -> {
                 when(event.event) {
-                    AddFeaturesBottomSheetEvent.OnAddDeck -> _state.update { it.copy(
-                        showAddDeckDialog = true
-                    ) }
-                    AddFeaturesBottomSheetEvent.OnAddFlashcards -> _state.update { it.copy(
-                        showAddFlashcardDialog = true
-                    ) }
+                    AddFeaturesBottomSheetEvent.OnAddDeck -> {
+                        _state.update { it.copy(
+                            showBottomSheet = false
+                        ) }
+                        event.navController.navigate(Screen.AddDeck.route)
+                    }
+                    AddFeaturesBottomSheetEvent.OnAddFlashcards -> {
+                        _state.update { it.copy(
+                            showBottomSheet = false
+                        ) }
+                        event.navController.navigate(Screen.AddFlashcard.route)
+                    }
                     AddFeaturesBottomSheetEvent.OnAddNote -> {
                         _state.update { it.copy(
                             showBottomSheet = false

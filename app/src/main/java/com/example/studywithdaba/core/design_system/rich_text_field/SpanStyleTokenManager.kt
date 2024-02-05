@@ -1,6 +1,5 @@
 package com.example.richtextfield
 
-import android.util.Log
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.text.SpanStyle
@@ -16,10 +15,10 @@ import androidx.compose.ui.unit.TextUnit
 
 class SpanStyleTextTokenManager(defaultValue: SpanStyle) : TextTokenManager<SpanStyle>(defaultValue) {
     fun<T> setStyleParameterInRange(start: Int, end: Int, value: T, argumentToUpdate: SpanStyleArgument) {
-        val changeTokens: MutableList<TextToken<SpanStyle>> = mutableListOf()
+        val changeTokens: MutableList<StyleToken<SpanStyle>> = mutableListOf()
         val valueAtStart = getValueAtIndex(start).copy()
         if(!doesTokenWithStartExists(start))
-            tokens.add(TextToken(start, getValueBeforeIndex(start)!!))
+            tokens.add(StyleToken(start, getValueBeforeIndex(start)!!))
         val tokenAtEnd = getValueAtIndex(end + 1)
         for(counter in tokens.indices) {
 
@@ -44,11 +43,15 @@ class SpanStyleTextTokenManager(defaultValue: SpanStyle) : TextTokenManager<Span
             }
         }
 
+
+
+
         if(!doesTokenWithStartExists(end)) {
             if(changeTokens.size >= 2) {
-                tokens.add(TextToken(end, tokenAtEnd!!))
+                tokens.add(StyleToken(end, tokenAtEnd!!))
             } else {
-                tokens.add(TextToken(end,valueAtStart))
+
+                tokens.add(StyleToken(end,valueAtStart))
             }
         }
 

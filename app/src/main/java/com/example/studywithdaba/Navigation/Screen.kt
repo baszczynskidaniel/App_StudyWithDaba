@@ -5,6 +5,8 @@ sealed  class Screen(val route: String) {
     object Notes: Screen("notes")
     object EditNote: Screen("edit_note")
     object Settings: Screen("settings")
+    object EditFlashcard: Screen("edit_flashcard")
+    object EditDeck:  Screen("edit_deck")
 
     object AddDeck: Screen("add_deck")
     object AddFlashcard: Screen("add_flashcard")

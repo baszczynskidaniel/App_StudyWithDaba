@@ -54,7 +54,7 @@ class NotesViewModel @Inject constructor(
         navController.navigate(Screen.EditNote.route)
     }
     fun onNoteClick(noteId: Long, navController: NavController) {
-        navController.navigate(Screen.EditNote.route + "?noteId=$noteId")
+        navController.navigate(Screen.EditNote.route + "?noteId=${noteId}")
     }
 }
 
@@ -122,11 +122,11 @@ internal fun NotesScreenPreview(
                 .background(MaterialTheme.colors.background)
         ) {
             NotesScreen(
-                listOf(Note("Title", "content"), Note("another title", "very long content")),
+                listOf(Note("Title", "content"),
+                    Note("another title", "very long content")),
                 navController = NavController(LocalContext.current),
                 {_, _ ->},
                 {  _ ->},
-
             )
         }
     }

@@ -296,7 +296,7 @@ class NotesViewModel @Inject constructor(
             .readTimeout(30, TimeUnit.SECONDS)
             .build()
 
-        val apiKey = "API_KEY"
+        val apiKey = "secret key"
         val url = "https://api.openai.com/v1/chat/completions"
 
 
@@ -307,7 +307,7 @@ class NotesViewModel @Inject constructor(
             {"role": "system", "content": "generate questions with answers for text in format: question;answer;question; ..."},
             {"role": "user", "content": "${note.content}"}
             ],
-            "max_tokens": 1000
+            "max_tokens": 3000
         }
     """.trimIndent()
 
@@ -327,21 +327,26 @@ class NotesViewModel @Inject constructor(
 
                 override fun onResponse(call: Call, response: Response) {
                     val body1 = response.body?.string()
+                    Log.v("body", body1.toString())
+                    try {
+                        if (body1 != null) {
 
-                    if (body1 != null) {
-                        Log.v("reponse", body1)
-                        body = body1
-                        val jsonObject = JsonParser.parseString(body).asJsonObject
-                        val content = jsonObject.getAsJsonArray("choices")[0].asJsonObject
-                            .getAsJsonObject("message")
-                            .getAsJsonPrimitive("content").asString
+                            body = body1
 
-                        flashcards = parseContentToFlashcards(content)
-                        insertFlashcards(flashcards)
-                        Log.v("flashcards", flashcards.toString())
+                            val jsonObject = JsonParser.parseString(body).asJsonObject
+                            val content = jsonObject.getAsJsonArray("choices")[0].asJsonObject
+                                .getAsJsonObject("message")
+                                .getAsJsonPrimitive("content").asString
 
-                    } else {
-                        Log.v("empty", "empty")
+                            flashcards = parseContentToFlashcards(content)
+                            insertFlashcards(flashcards)
+                            Log.v("flashcards", flashcards.toString())
+
+                        } else {
+                            Log.v("empty", "empty")
+                        }
+                    } catch (e: Exception) {
+                        Log.v("error", e.message.toString())
                     }
                 }
             })
@@ -351,6 +356,7 @@ class NotesViewModel @Inject constructor(
     }
 
     private fun parseContentToFlashcards(response: String): List<Flashcard> {
+
         val flashcards = mutableListOf<Flashcard>()
         val sections = response.split("\n\n")
         for(section in sections) {

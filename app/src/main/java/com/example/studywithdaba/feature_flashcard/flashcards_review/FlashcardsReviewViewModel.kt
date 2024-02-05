@@ -165,10 +165,11 @@ class FlashcardsReviewViewModel @Inject constructor(
 
     private fun onSettingsDismiss(newSettings: FlashcardsReviewSettingsState) {
         if(_state.value.settings != newSettings) {
+            _state.value = _state.value.copy(settings = newSettings)
             val flashcardsInReview = generateFlashcardsInReview(_flashcards.value)
             if(flashcardsInReview.size != 0) {
                 _state.value = _state.value.copy(
-                    settings = newSettings,
+
                     flashcardsInReview = flashcardsInReview,
                     currentFlashcard = flashcardsInReview.first(),
                     isCurrentFlashcardFrontVisible = flashcardsInReview.first().isFrontVisible,
@@ -179,15 +180,19 @@ class FlashcardsReviewViewModel @Inject constructor(
                 )
             } else {
                 _state.value = _state.value.copy(
-                    showSettingsDialog = true
+                    showSettingsDialog = false
                 )
             }
+        } else {
+            _state.value = _state.value.copy(
+                showSettingsDialog = false
+            )
         }
     }
 
     private fun onSettings() {
         _state.value = _state.value.copy(
-            showSettingsDialog = true
+            showSettingsDialog = !_state.value.showSettingsDialog
         )
     }
 
@@ -248,6 +253,7 @@ class FlashcardsReviewViewModel @Inject constructor(
                 )
             } else {
                 _state.value = _state.value.copy(
+                    numberOfAnsweredFlashcards = _state.value.numberOfAnsweredFlashcards - 1,
                     showSummaryDialog = true
                 )
             }

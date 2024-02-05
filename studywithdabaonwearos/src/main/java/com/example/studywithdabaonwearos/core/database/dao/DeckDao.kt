@@ -77,13 +77,20 @@ interface DeckDao {
 
     @Query(
         "select Deck.*, " +
-                "count(case when state = \"NEW\" THEN deckflashcardcrossref.flashcardId END ) AS \"countNew\",  " +
-                "count(case when state = \"TO_REPEAT\" THEN deckflashcardcrossref.flashcardId END) AS \"countToRepeat\", " +
-                "count(case when state = \"REPEATED\" THEN deckflashcardcrossref.flashcardId END) AS \"countRepeated\", " +
+                "count(case when state = \"NEW\" " +
+                "   THEN deckflashcardcrossref.flashcardId END ) AS \"countNew\",  " +
+                "count(case when state = \"TO_REPEAT\" " +
+                "   THEN deckflashcardcrossref.flashcardId END) AS \"countToRepeat\", " +
+                "count(case when state = \"REPEATED\" " +
+                "   THEN deckflashcardcrossref.flashcardId END) AS \"countRepeated\", " +
                 "count(flashcard.flashcardId) AS \"countFlashcards\", " +
-                "count(case when flashcard.favourite = 1 THEN deckflashcardcrossref.flashcardId END ) AS \"countFavourite\" " +
-                "from deck Left join deckflashcardcrossref on deckflashcardcrossref.deckId = deck.deckId" +
-                " left  join flashcard on deckflashcardcrossref.flashcardId = flashcard.flashcardId group by deck.deckId"
+                "count(case when flashcard.favourite = 1 " +
+                "   THEN deckflashcardcrossref.flashcardId END ) AS \"countFavourite\" " +
+                "from deck Left join deckflashcardcrossref " +
+                "   on deckflashcardcrossref.deckId = deck.deckId" +
+                " left  join flashcard " +
+                "   on deckflashcardcrossref.flashcardId = flashcard.flashcardId " +
+                "group by deck.deckId"
     )
     fun getDeckWithSummary(): Flow<List<DeckWithDeckSummary>>
 
